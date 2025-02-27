@@ -5,6 +5,7 @@ import time
 import datetime
 
 from env.test_env import TestEnv
+from utility.email.send_email import TestEmail
 from utility.test_log.logger import TestLog
 from utility.test_result.result import TestResult
 import glob
@@ -70,10 +71,31 @@ if __name__ == '__main__':
         test_log_folder = get_save_log_path(test_path)
         find_case_folder = os.path.join(test_path,test_type)
         test_env = TestEnv(test_log_folder)
+
         if test_single_file_flag:
             find_and_execute_tests(test_env,find_case_folder, test_file_name)
         else:
             for file_name in test_file_names:
                 find_and_execute_tests(test_env,find_case_folder, file_name)
+
+        email_header = test_type # default
+        if test_single_file_flag:
+            email_header += "(" + test_file_name + ")"
+        else:
+            count = 0
+            for file_name in test_file_names:
+                count += 1
+                if count == 1:
+                    email_header += "(" + file_name + ","
+                elif count == len(test_file_names):
+                    email_header += (file_name + ")")
+                else:
+                    email_header += (file_name + ",")
+
+        test_result = test_env.test_result
+        email_header = test_type
+
+        email_send = TestEmail(email_header,test_env.test_result)
+        email_send.send_email()
     except Exception as e:
         print(e)

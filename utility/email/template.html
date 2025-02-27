@@ -1,10 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>测试报告</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .pass {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .fail {
+            color: #F44336;
+            font-weight: bold;
+        }
+        .crash {
+            color: #FF9800;
+            font-weight: bold;
+        }
+        .summary {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
-
+    <div class="container">
+        <h1>测试报告</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Case Name</th>
+                    <th>Test Result</th>
+                    <th>Test Loop</th>
+                    <th>Fail Info</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for case in test_cases %}
+                <tr>
+                    <td>{{ case.case_name }}</td>
+                    <td>
+                        {% if case.test_result == 'pass' %}
+                            <span class="pass">Pass</span>
+                        {% elif case.test_result == 'fail' %}
+                            <span class="fail">Fail</span>
+                        {% elif case.test_result == 'crash' %}
+                            <span class="crash">Crash</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ case.test_loop }}</td>
+                    <td>{{ case.fail_info if case.fail_info else '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="summary">
+            <p><strong>Total Cases:</strong> {{ total }}</p>
+            <p><strong>Pass:</strong> {{ pass_count }}</p>
+            <p><strong>Fail:</strong> {{ fail_count }}</p>
+            <p><strong>Crash:</strong> {{ crash_count }}</p>
+        </div>
+    </div>
 </body>
 </html>

@@ -24,23 +24,18 @@ class TestLog():
         self.logger = logging.getLogger(log_file)
 
     def log_debug(self, message):
-        """记录 DEBUG 级别的日志"""
         self.logger.debug(message)
 
     def log_info(self, message):
-        """记录 INFO 级别的日志"""
         self.logger.info(message)
 
     def log_warning(self, message):
-        """记录 WARNING 级别的日志"""
         self.logger.warning(message)
 
     def log_error(self, message, exc_info=False):
-        """记录 ERROR 级别的日志，可选是否记录异常信息"""
         self.logger.error(message, exc_info=exc_info)
 
     def log_critical(self, message):
-        """记录 CRITICAL 级别的日志"""
         self.logger.critical(message)
 
 

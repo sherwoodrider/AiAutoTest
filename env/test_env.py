@@ -118,6 +118,15 @@ class TestEnv():
         save_log_file = os.path.join(test_log_folder, log_folder_name)
         return save_log_file
 
+    def save_json(self):
+        pass
+
+    def upload_test_log(self):
+        pass
+
+    def zip_test_log(self):
+        pass
+
 
 
 
