@@ -1,20 +1,21 @@
-import glob
-import importlib
-import inspect
+import configparser
 import os
 import time
 from datetime import datetime
 
+from selenium.webdriver import Keys
 from selenium.webdriver.chrome import webdriver
+from selenium.webdriver.common.by import By
 
 from utility.test_log.logger import TestLog
 from utility.test_result.result import TestResult
 
 
 def print_case_name(func):
-    def wrapper(*args,**kwargs):
-        print('[DEBUG]: enter {}()'.format(func.__name__))
-        result = func(*args,**kwargs)
+    def wrapper(test_env):
+        test_env.test_log.log_info('enter {}()'.format(func.__name__))
+        result = func(test_env)
+        test_env.test_log.log_info('quit {}()'.format(func.__name__))
         return result
     return wrapper
 
@@ -29,13 +30,85 @@ def test_case(func):
         return result
     return wrapper
 
-def read_config():
-    pass
+
 
 class TestEnv():
     def __init__(self,test_log_folder):
         self.test_result = TestResult()
         self.test_log = TestLog(self.get_test_log_path(test_log_folder))
+        self.login_name = ""
+        self.login_password = ""
+        self.sender_name = ""
+        self.sender_password = ""
+        self.recevicer_name = ""
+        self.jenkins_name = ""
+        self.jenkins_password = ""
+        self.read_config()
+        self.web_driver = None
+        self.main_window_handle = None# 保存登录后的窗口句柄
+
+    def read_config(self):
+        try:
+            current_folder_path = os.path.dirname(os.getcwd())
+            config_file_path = os.path.join(current_folder_path, "config/test_config.ini")
+            config = configparser.ConfigParser()
+            config.read(config_file_path)
+
+            self.login_name = config['deep_seek']['login_name']
+            self.login_password = config['deep_seek']['password']
+
+            self.sender_name = config['email']['sender_name']
+            self.sender_password = config['email']['sender_password']
+            self.recevicer_name = config['email']['recevicer_name']
+
+            self.jenkins_name = config['jenkins']['name']
+            self.jenkins_password = config['jenkins']['password']
+        except Exception as e:
+            print(e)
+            self.test_log.log_critical(e)
+    def login(self):
+        try:
+            # 初始化浏览器驱动（以 Chrome 为例）
+            self.web_driver = webdriver.Chrome()  # 如果 ChromeDriver 不在 PATH 中，可以指定路径，如 webdriver.Chrome('/path/to/chromedriver')
+            # 打开 DeepSeek 登录页面
+            self.web_driver.get("https://www.deepseek.com/login")  # 替换为实际的登录页面 URL
+            # 找到用户名和密码输入框（根据实际页面元素修改）
+            username_input = self.web_driver.find_element(By.NAME, "username")  # 替换为实际的用户名输入框元素
+            password_input = self.web_driver.find_element(By.NAME, "password")  # 替换为实际的密码输入框元素
+
+            # 输入用户名和密码
+            username_input.send_keys(self.login_name)
+            password_input.send_keys(self.login_password)
+
+            # 提交登录表单
+            password_input.send_keys(Keys.RETURN)
+            time.sleep(5)  # 等待登录完成
+            self.main_window_handle = self.web_driver.current_window_handle  # 保存登录后的窗口句柄
+        except Exception as e:
+            print(e)
+            self.test_log.log_critical(e)
+
+    def quit(self):
+        try:
+            if not self.web_driver == None :
+                self.web_driver.quit()
+            else:
+                error_info = "self.web_driver == None"
+                self.test_log.log_error(error_info)
+        except Exception as e:
+            print(e)
+            self.test_log.log_critical(e)
+
+    def get_wed_driver_handle(self):
+        try:
+            if not self.main_window_handle == None :
+                return self.main_window_handle
+            else:
+                error_info = "self.main_window_handle == None "
+                self.test_log.log_error(error_info)
+        except Exception as e:
+            print(e)
+            self.test_log.log_critical(e)
 
     def get_test_log_path(self,test_log_folder):
         now = datetime.now()
@@ -45,38 +118,6 @@ class TestEnv():
         save_log_file = os.path.join(test_log_folder, log_folder_name)
         return save_log_file
 
-    def find_and_execute_tests(self,directory, function_keyword):
-        """
-        在指定目录下查找包含特定函数关键字的 Python 文件，并执行其中以 test 开头的函数。
 
-        :param directory: 要搜索的目录路径
-        :param function_keyword: 要查找的函数关键字
-        """
-        # 遍历目录下的所有 .py 文件
-        for file_path in glob.glob(os.path.join(directory, '*.py')):
-            # 获取模块名（去掉 .py 后缀）
-            module_name = os.path.splitext(os.path.basename(file_path))[0]
-
-            # 动态加载模块
-            spec = importlib.util.spec_from_file_location(module_name, file_path)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-
-            # 检查模块中是否包含目标函数关键字
-            has_keyword_flag = any(function_keyword in name for name in dir(module))
-            if not has_keyword_flag:
-                continue
-            else:
-                print(f'Found target keyword in file: {file_path}')
-
-            # 遍历模块中的所有成员
-            for name, obj in inspect.getmembers(module):
-                # 检查是否是函数且以 test 开头
-                if inspect.isfunction(obj) and name.startswith('test'):
-                    print(f'Running test function: {name}')
-                    try:
-                        obj()  # 执行测试函数
-                    except Exception as e:
-                        print(f'Error running {name}: {e}')
 
 
