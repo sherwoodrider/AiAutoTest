@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 
 from selenium.webdriver import Keys
-from selenium.webdriver.chrome import webdriver
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 from utility.test_log.logger import TestLog
@@ -34,32 +34,39 @@ def test_case(func):
 
 class TestEnv():
     def __init__(self,test_log_folder):
-        self.test_result = TestResult()
+        self.test_log_folder = test_log_folder
+        self.test_result = TestResult(self.test_log_folder)
         self.test_log = TestLog(self.get_test_log_path(test_log_folder))
         self.login_name = ""
         self.login_password = ""
-        self.sender_name = ""
-        self.sender_password = ""
-        self.recevicer_name = ""
+        # self.sender_name = ""
+        # self.sender_password = ""
+        # self.recevicer_name = ""
         self.jenkins_name = ""
         self.jenkins_password = ""
         self.read_config()
-        self.web_driver = None
+        self.driver = None
         self.main_window_handle = None# 保存登录后的窗口句柄
+        self.login()
+    def __del__(self):
+        self.quit()
 
     def read_config(self):
         try:
-            current_folder_path = os.path.dirname(os.getcwd())
-            config_file_path = os.path.join(current_folder_path, "config/test_config.ini")
+            # 获取 D:\code_repo\AiAutoTest\logs
+            logs_dir = os.path.dirname(self.test_log_folder)
+            # 获取 D:\code_repo\AiAutoTest
+            base_dir = os.path.dirname(logs_dir)
+            config_file_path = os.path.join(base_dir, "config/test_config.ini")
             config = configparser.ConfigParser()
             config.read(config_file_path)
 
             self.login_name = config['deep_seek']['login_name']
             self.login_password = config['deep_seek']['password']
 
-            self.sender_name = config['email']['sender_name']
-            self.sender_password = config['email']['sender_password']
-            self.recevicer_name = config['email']['recevicer_name']
+            # self.sender_name = config['email']['sender_name']
+            # self.sender_password = config['email']['sender_password']
+            # self.recevicer_name = config['email']['recevicer_name']
 
             self.jenkins_name = config['jenkins']['name']
             self.jenkins_password = config['jenkins']['password']
@@ -68,33 +75,51 @@ class TestEnv():
             self.test_log.log_critical(e)
     def login(self):
         try:
-            # 初始化浏览器驱动（以 Chrome 为例）
-            self.web_driver = webdriver.Chrome()  # 如果 ChromeDriver 不在 PATH 中，可以指定路径，如 webdriver.Chrome('/path/to/chromedriver')
+            self.driver = webdriver.Chrome()
             # 打开 DeepSeek 登录页面
-            self.web_driver.get("https://www.deepseek.com/login")  # 替换为实际的登录页面 URL
-            # 找到用户名和密码输入框（根据实际页面元素修改）
-            username_input = self.web_driver.find_element(By.NAME, "username")  # 替换为实际的用户名输入框元素
-            password_input = self.web_driver.find_element(By.NAME, "password")  # 替换为实际的密码输入框元素
-
-            # 输入用户名和密码
+            self.driver.get("https://chat.deepseek.com/sign_in")
+            element = self.driver.find_element(By.XPATH, "//div[text()='密码登录']")
+            element.click()
+            time.sleep(2)
+            # # 找到用户名和密码输入框（根据实际页面元素修改）
+            username_input = self.driver.find_element(By.XPATH, "//input[@placeholder='请输入手机号/邮箱地址']")
+            password_input = self.driver.find_element(By.XPATH, "//input[@placeholder='请输入密码']")
             username_input.send_keys(self.login_name)
             password_input.send_keys(self.login_password)
-
-            # 提交登录表单
-            password_input.send_keys(Keys.RETURN)
+            checkbox = self.driver.find_element(By.CLASS_NAME, "ds-checkbox")#勾选同意
+            checkbox.click()
+            login_input = self.driver.find_element(By.XPATH, "//div[text()='登录']")  # 点击登录
+            login_input.click()
             time.sleep(5)  # 等待登录完成
-            self.main_window_handle = self.web_driver.current_window_handle  # 保存登录后的窗口句柄
         except Exception as e:
             print(e)
             self.test_log.log_critical(e)
 
     def quit(self):
         try:
-            if not self.web_driver == None :
-                self.web_driver.quit()
+            if not self.driver == None :
+                self.driver.quit()
             else:
-                error_info = "self.web_driver == None"
+                error_info = "self.driver == None"
                 self.test_log.log_error(error_info)
+        except Exception as e:
+            print(e)
+            self.test_log.log_critical(e)
+
+    def ask_question(self,question):
+        try:
+            if self.driver == None:
+                error_info = "self.driver == None"
+                self.test_log.log_error(error_info)
+            else:
+                question_input = self.driver.find_element(By.ID, "chat-input")
+                question_input.send_keys(question)
+                time.sleep(2)
+                button = self.driver.find_element(By.CLASS_NAME, "f6d670")  # 点击发送
+                button.click()
+                time.sleep(60)  # 等待答案生成
+                answer = self.driver.find_element(By.CLASS_NAME, "ds-markdown--block").text  # 获取纯文本内容
+                return answer
         except Exception as e:
             print(e)
             self.test_log.log_critical(e)
@@ -113,8 +138,8 @@ class TestEnv():
     def get_test_log_path(self,test_log_folder):
         now = datetime.now()
         # 格式化时间为文件名格式
-        str_now = now.strftime('%Y-%m-%d_%H-%M-%S')
-        log_folder_name = "main" + str_now
+        str_now = now.strftime('%Y_%m_%d_%H_%M_%S')
+        log_folder_name = "main_" + str_now + ".log"
         save_log_file = os.path.join(test_log_folder, log_folder_name)
         return save_log_file
 

@@ -30,8 +30,7 @@ def find_and_execute_tests(test_env, directory, function_keyword):
         spec.loader.exec_module(module)
 
         # 检查模块中是否包含目标函数关键字
-        has_keyword_flag = any(function_keyword in name for name in dir(module))
-        if not has_keyword_flag:
+        if not str(function_keyword) == (module_name):
             continue
         else:
             print(f'Found target keyword in file: {file_path}')
@@ -47,14 +46,15 @@ def find_and_execute_tests(test_env, directory, function_keyword):
                     print(f'Error running {name}: {e}')
 
 def get_save_log_path(test_path):
-    now = datetime.now()
+    now = datetime.datetime.now()
     # 格式化时间为文件名格式
-    str_now = now.strftime('%Y-%m-%d_%H-%M-%S')
-    log_folder_name = "aiautotest" + str_now
+    str_now = now.strftime('%Y_%m_%d_%H_%M_%S')
+    log_folder_name = "aiautotest_" + str_now
     save_log_folder = os.path.join(test_path, "logs")
     test_log_folder = os.path.join(save_log_folder, log_folder_name)
     if not os.path.exists(test_log_folder):
         os.mkdir(test_log_folder)
+    return test_log_folder
 
 
 test_file_names = [
@@ -78,6 +78,7 @@ if __name__ == '__main__':
             for file_name in test_file_names:
                 find_and_execute_tests(test_env,find_case_folder, file_name)
 
+        test_env.test_result.result_to_json()
         email_header = test_type # default
         if test_single_file_flag:
             email_header += "(" + test_file_name + ")"
