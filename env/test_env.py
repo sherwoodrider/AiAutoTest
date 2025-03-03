@@ -36,7 +36,6 @@ def test_case(func):
     return wrapper
 
 
-
 class TestEnv():
     def __init__(self,test_log_folder):
         self.test_log_folder = test_log_folder
@@ -123,12 +122,21 @@ class TestEnv():
                 button = self.driver.find_element(By.CLASS_NAME, "f6d670")  # 点击发送
                 button.click()
                 time.sleep(60)  # 等待答案生成
-                answer = self.driver.find_element(By.CLASS_NAME, "ds-markdown--block").text  # 获取纯文本内容
+                answers = self.driver.find_elements(By.CLASS_NAME, "ds-markdown--block")
+                answer =  answers[-1].text  # 返回最后一个回答
                 return answer
         except Exception as e:
             print(e)
             self.test_log.log_critical(e)
 
+    def check_keyword_relevance(self,question, answer):
+        try:
+            keywords = set(question.split())
+            relevant = any(keyword in answer for keyword in keywords)
+            return relevant
+        except Exception as e:
+            print(e)
+            self.test_log.log_critical(e)
     def get_wed_driver_handle(self):
         try:
             if not self.main_window_handle == None :

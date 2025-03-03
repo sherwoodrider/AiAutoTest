@@ -65,6 +65,7 @@
             <thead>
                 <tr>
                     <th>Numbers</th>
+<!--                    <th>Test Type</th>-->
                     <th>Case Name</th>
                     <th>Test Result</th>
                     <th>Fail Info</th>
@@ -74,6 +75,7 @@
                 {% for case in test_cases %}
                 <tr>
                     <td>{{ case.number }}</td>
+<!--                    <td>{{ case.test_type }}</td>-->
                     <td>{{ case.case_name }}</td>
                     <td>
                         {% if case.crash > 0 %}

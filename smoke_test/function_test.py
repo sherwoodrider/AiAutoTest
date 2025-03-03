@@ -4,16 +4,6 @@ from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 from env.test_env import print_case_name
 
-def check_keyword_relevance(test_env,question, answer):
-    try:
-        keywords = set(question.split())
-        relevant = any(keyword in answer for keyword in keywords)
-        return relevant
-    except Exception as e:
-        print(e)
-        test_env.test_log.log_critical(e)
-
-
 @print_case_name
 def test_answers_to_chinese_question(test_env):
     try:
@@ -33,15 +23,14 @@ def test_answers_to_chinese_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\n answer: {answer}\n")
-            case_result[question] = answer
-            if check_keyword_relevance(test_env,question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
                 case_result["fail"] += 1
                 fail_info = "The answer is irrelevant to the question"
                 test_env.test_log.log_error(fail_info)
-                case_result["fail_info"] = fail_info
+                case_result["fail_info"].append(fail_info)
         test_env.test_result.add_case_result(str(inspect.currentframe().f_code.co_name), case_result)
     except Exception as e:
         test_env.test_log.log_critical(e)
@@ -49,6 +38,7 @@ def test_answers_to_chinese_question(test_env):
 def test_answers_to_english_question(test_env):
     try:
         case_result = {
+            # "test_type": str(inspect.getfile(inspect.currentframe())),
             "case_name": str(inspect.currentframe().f_code.co_name),
             "total": 0,
             "pass": 0,
@@ -61,17 +51,17 @@ def test_answers_to_english_question(test_env):
             "How to design a database"
         ]
         for question in questions:
+            case_result["total"] += 1
             answer =  test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\n answer: {answer}\n")
-            case_result[question] = answer
-            if check_keyword_relevance(test_env, question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
                 case_result["fail"] += 1
                 fail_info = "The answer is irrelevant to the question"
                 test_env.test_log.log_error(fail_info)
-                case_result["fail_info"] = fail_info
+                case_result["fail_info"].append(fail_info)
         test_env.test_result.add_case_result(str(inspect.currentframe().f_code.co_name),case_result)
     except Exception as e:
         test_env.test_log.log_critical(e)

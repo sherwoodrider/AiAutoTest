@@ -78,7 +78,6 @@ if __name__ == '__main__':
             for file_name in test_file_names:
                 find_and_execute_tests(test_env,find_case_folder, file_name)
 
-        test_env.test_result.result_to_json()
         email_header = test_type # default
         if test_single_file_flag:
             email_header += "(" + test_file_name + ")"
@@ -93,9 +92,9 @@ if __name__ == '__main__':
                 else:
                     email_header += (file_name + ",")
 
-        test_result = test_env.test_result
-        email_header = test_type
-        email_send = TestEmail(email_header,test_env.test_result)
+        test_result = test_env.test_result.get_final_dict()
+        test_env.test_result.result_to_json()
+        email_send = TestEmail(email_header,test_result)
         email_send.send_email()
     except Exception as e:
         print(e)
