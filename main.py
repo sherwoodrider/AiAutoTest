@@ -61,7 +61,7 @@ test_file_names = [
     "function_test",
     "ethical_test"
 ]
-test_single_file_flag = False
+test_single_file_flag = True
 test_file_name = "function_test"
 test_type = "smoke_test"
 
@@ -95,7 +95,6 @@ if __name__ == '__main__':
 
         test_result = test_env.test_result
         email_header = test_type
-
         email_send = TestEmail(email_header,test_env.test_result)
         email_send.send_email()
     except Exception as e:

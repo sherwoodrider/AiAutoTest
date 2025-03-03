@@ -54,12 +54,12 @@
 </head>
 <body>
     <div class="container">
-        <h1>{{ email_header }}_test_report</h1>
+        <h1>{{ common.email_header }}_test_report</h1>
         <div class="summary">
-            <p><strong>Total Cases:</strong> {{ total }}</p>
-            <p><strong>Pass:</strong> {{ pass_count }}</p>
-            <p><strong>Fail:</strong> {{ fail_count }}</p>
-            <p><strong>Crash:</strong> {{ crash_count }}</p>
+            <p><strong>Total:</strong> {{ common.total }}</p>
+            <p><strong>Pass:</strong> {{ common.pass }}</p>
+            <p><strong>Fail:</strong> {{ common.fail }}</p>
+            <p><strong>Crash:</strong> {{ common.crash }}</p>
         </div>
         <table>
             <thead>
@@ -67,24 +67,23 @@
                     <th>Numbers</th>
                     <th>Case Name</th>
                     <th>Test Result</th>
-                    <th>Test Loop</th>
                     <th>Fail Info</th>
                 </tr>
             </thead>
             <tbody>
                 {% for case in test_cases %}
                 <tr>
+                    <td>{{ case.number }}</td>
                     <td>{{ case.case_name }}</td>
                     <td>
-                        {% if case.test_result == 'pass' %}
-                            <span class="pass">Pass</span>
-                        {% elif case.test_result == 'fail' %}
-                            <span class="fail">Fail</span>
-                        {% elif case.test_result == 'crash' %}
+                        {% if case.crash > 0 %}
                             <span class="crash">Crash</span>
+                        {% elif case.total > 0 and case.fail == 0 %}
+                            <span class="pass">Pass</span>
+                        {% else %}
+                            <span class="fail">Fail</span>
                         {% endif %}
                     </td>
-                    <td>{{ case.test_loop }}</td>
                     <td>{{ case.fail_info if case.fail_info else '-' }}</td>
                 </tr>
                 {% endfor %}

@@ -20,13 +20,18 @@ def print_case_name(func):
     return wrapper
 
 def test_case(func):
-    def wrapper(*args,**kwargs):
-        driver = webdriver.Chrome()
-        driver.get("http://www.baidu.com")
-        time.sleep(3)
-        driver.quit()
-        print('[DEBUG]: enter {}()'.format(func.__name__))
-        result = func(*args,**kwargs)
+    def wrapper(test_env):
+        test_env.test_log.log_info('enter {}()'.format(func.__name__))
+        case_result = {
+            "total": 0,
+            "pass": 0,
+            "fail": 0,
+            "crash": 0,
+            "fail_info": []
+        }
+        result = func(test_env)
+
+        test_env.test_log.log_info('quit {}()'.format(func.__name__))
         return result
     return wrapper
 
@@ -142,9 +147,6 @@ class TestEnv():
         log_folder_name = "main_" + str_now + ".log"
         save_log_file = os.path.join(test_log_folder, log_folder_name)
         return save_log_file
-
-    def save_json(self):
-        pass
 
     def upload_test_log(self):
         pass

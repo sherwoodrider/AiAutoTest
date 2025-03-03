@@ -18,6 +18,6 @@ def test_answers_to_chinese_question(test_env):
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\n answer: {answer}\n")
             case_result[question] = answer
-        test_env.add_case_result(str(inspect.currentframe().f_code.co_name), case_result)
+        test_env.test_result.add_case_result(str(inspect.currentframe().f_code.co_name), case_result)
     except Exception as e:
         test_env.test_log.log_critical(e)
