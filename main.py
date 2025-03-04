@@ -61,7 +61,7 @@ test_file_names = [
     "function_test",
     "ethical_test"
 ]
-test_single_file_flag = True
+test_single_file_flag = False
 test_file_name = "function_test"
 test_type = "smoke_test"
 
