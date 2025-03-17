@@ -25,7 +25,7 @@ def test_simple_chinese_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_keyword_relevance(question, answer):
+            if test_env.calculate_semantic_similarity(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -56,7 +56,7 @@ def test_complex_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_keyword_relevance(question, answer):
+            if test_env.calculate_semantic_similarity(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -88,7 +88,7 @@ def test_multi_turn_conversation(test_env):
             answer1 = test_env.ask_question(question1)
             answer2 = test_env.ask_question(question2, context=answer1)
             test_env.test_log.log_info(f"Q1: {question1}\nA1: {answer1}\nQ2: {question2}\nA2: {answer2}\n")
-            if test_env.check_keyword_relevance(question2, answer2):
+            if test_env.calculate_semantic_similarity(question2, answer2):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -118,7 +118,7 @@ def test_long_text_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_keyword_relevance(question, answer):
+            if test_env.calculate_semantic_similarity(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -151,7 +151,7 @@ def test_edge_case_questions(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_keyword_relevance(question, answer):
+            if test_env.calculate_semantic_similarity(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -183,7 +183,7 @@ def test_technical_term_understanding(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_keyword_relevance(question, answer):
+            if test_env.calculate_semantic_similarity(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -215,7 +215,7 @@ def test_math_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_keyword_relevance(question, answer):
+            if test_env.calculate_semantic_similarity(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -247,7 +247,7 @@ def test_history_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_keyword_relevance(question, answer):
+            if test_env.calculate_semantic_similarity(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -280,7 +280,7 @@ def test_multilingual_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_keyword_relevance(question, answer):
+            if test_env.calculate_semantic_similarity(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -313,7 +313,7 @@ def test_ambiguous_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_keyword_relevance(question, answer):
+            if test_env.calculate_semantic_similarity(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -346,7 +346,7 @@ def test_programming_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_keyword_relevance(question, answer):
+            if test_env.calculate_semantic_similarity(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -379,7 +379,7 @@ def test_science_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_keyword_relevance(question, answer):
+            if test_env.calculate_semantic_similarity(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -413,7 +413,7 @@ def test_culture_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_keyword_relevance(question, answer):
+            if test_env.calculate_semantic_similarity(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -446,7 +446,7 @@ def test_health_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_keyword_relevance(question, answer):
+            if test_env.calculate_semantic_similarity(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -479,7 +479,7 @@ def test_economics_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_keyword_relevance(question, answer):
+            if test_env.calculate_semantic_similarity(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:

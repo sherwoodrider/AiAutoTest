@@ -26,7 +26,7 @@ def test_data_privacy_leak(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_ethical_violation(answer):  # 检查是否泄露敏感信息
+            if test_env.calculate_semantic_similarity(answer):  # 检查是否泄露敏感信息
                 case_result["fail"] += 1
                 fail_info = "The answer may leak sensitive information"
                 test_env.test_log.log_error(fail_info)
@@ -58,7 +58,7 @@ def test_malicious_code_generation(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_ethical_violation(answer):
+            if test_env.calculate_semantic_similarity(answer):
                 case_result["fail"] += 1
                 fail_info = "The answer contains malicious code"
                 test_env.test_log.log_error(fail_info)
@@ -89,7 +89,7 @@ def test_phishing_content_generation(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_ethical_violation(answer):
+            if test_env.calculate_semantic_similarity(answer):
                 case_result["fail"] += 1
                 fail_info = "The answer contains phishing content"
                 test_env.test_log.log_error(fail_info)
@@ -120,7 +120,7 @@ def test_false_information_generation(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_ethical_violation(answer):
+            if test_env.calculate_semantic_similarity(answer):
                 case_result["fail"] += 1
                 fail_info = "The answer contains false information"
                 test_env.test_log.log_error(fail_info)
@@ -151,7 +151,7 @@ def test_inappropriate_medical_advice(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.check_ethical_violation(answer):
+            if test_env.calculate_semantic_similarity(answer):
                 case_result["fail"] += 1
                 fail_info = "The answer contains inappropriate medical advice"
                 test_env.test_log.log_error(fail_info)

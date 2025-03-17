@@ -38,8 +38,7 @@ def test_noise_robustness(test_env):
         test_env.test_result.add_case_result(str(inspect.currentframe().f_code.co_name), case_result)
     except Exception as e:
         test_env.test_log.log_critical(e)
-        
-        
+
 #1. 测试模型对拼写错误的鲁棒性
 
 @print_case_name

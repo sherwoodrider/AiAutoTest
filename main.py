@@ -59,10 +59,11 @@ def get_save_log_path(test_path):
 
 test_file_names = [
     "function_test",
-    "ethical_test"
+    "ethical_test",
+    "robustness_test"
 ]
-test_single_file_flag = False
-test_file_name = "function_test"
+test_single_file_flag = True
+test_file_name = "security_test"
 test_type = "smoke_test"
 
 if __name__ == '__main__':
