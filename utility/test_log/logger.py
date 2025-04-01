@@ -15,7 +15,8 @@ class TestLog():
         # 配置 logging
         logging.basicConfig(
         level=level,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        # format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        format='%(asctime)s - %(levelname)s - %(message)s',
         filename=log_file,
         filemode='a'  # 追加模式
         )
