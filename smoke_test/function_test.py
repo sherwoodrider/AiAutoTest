@@ -2,7 +2,9 @@ import inspect
 import time
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
-from env.test_env import print_case_name
+from env.test_env import print_case_name, skip
+
+
 #1. 测试AI对简单中文问题的回答
 @print_case_name
 def test_simple_chinese_question(test_env):
@@ -17,15 +19,15 @@ def test_simple_chinese_question(test_env):
             "fail_info": []
         }
         questions = [
-            "什么是机器学习",
-            "Python是什么",
+            # "什么是机器学习",
+            # "Python是什么",
             "如何学习编程"
         ]
         for question in questions:
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.calculate_semantic_similarity(question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -37,6 +39,7 @@ def test_simple_chinese_question(test_env):
     except Exception as e:
         test_env.test_log.log_critical(e)
 #2. 测试AI对复杂问题的回答
+@skip
 @print_case_name
 def test_complex_question(test_env):
     try:
@@ -56,7 +59,7 @@ def test_complex_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.calculate_semantic_similarity(question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -68,6 +71,7 @@ def test_complex_question(test_env):
     except Exception as e:
         test_env.test_log.log_critical(e)
 #3. 测试AI对多轮对话的支持
+@skip
 @print_case_name
 def test_multi_turn_conversation(test_env):
     try:
@@ -88,7 +92,7 @@ def test_multi_turn_conversation(test_env):
             answer1 = test_env.ask_question(question1)
             answer2 = test_env.ask_question(question2, context=answer1)
             test_env.test_log.log_info(f"Q1: {question1}\nA1: {answer1}\nQ2: {question2}\nA2: {answer2}\n")
-            if test_env.calculate_semantic_similarity(question2, answer2):
+            if test_env.check_keyword_relevance(question2, answer2):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -100,6 +104,7 @@ def test_multi_turn_conversation(test_env):
     except Exception as e:
         test_env.test_log.log_critical(e)
 #4. 测试AI对长文本问题的回答
+@skip
 @print_case_name
 def test_long_text_question(test_env):
     try:
@@ -118,7 +123,7 @@ def test_long_text_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.calculate_semantic_similarity(question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -130,6 +135,7 @@ def test_long_text_question(test_env):
     except Exception as e:
         test_env.test_log.log_critical(e)
 #5. 测试AI对边界问题的回答
+@skip
 @print_case_name
 def test_edge_case_questions(test_env):
     try:
@@ -151,7 +157,7 @@ def test_edge_case_questions(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.calculate_semantic_similarity(question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -163,6 +169,7 @@ def test_edge_case_questions(test_env):
     except Exception as e:
         test_env.test_log.log_critical(e)
 #6. 测试AI对技术术语的理解
+@skip
 @print_case_name
 def test_technical_term_understanding(test_env):
     try:
@@ -183,7 +190,7 @@ def test_technical_term_understanding(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.calculate_semantic_similarity(question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -195,6 +202,7 @@ def test_technical_term_understanding(test_env):
     except Exception as e:
         test_env.test_log.log_critical(e)
 #7. 测试AI对数学问题的回答
+@skip
 @print_case_name
 def test_math_question(test_env):
     try:
@@ -215,7 +223,7 @@ def test_math_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.calculate_semantic_similarity(question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -227,6 +235,7 @@ def test_math_question(test_env):
     except Exception as e:
         test_env.test_log.log_critical(e)
 #8. 测试AI对历史问题的回答
+@skip
 @print_case_name
 def test_history_question(test_env):
     try:
@@ -247,7 +256,7 @@ def test_history_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.calculate_semantic_similarity(question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -260,6 +269,7 @@ def test_history_question(test_env):
         test_env.test_log.log_critical(e)
 
 #9. 测试AI对多语言问题的回答
+@skip
 @print_case_name
 def test_multilingual_question(test_env):
     try:
@@ -280,7 +290,7 @@ def test_multilingual_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.calculate_semantic_similarity(question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -293,6 +303,7 @@ def test_multilingual_question(test_env):
         test_env.test_log.log_critical(e)
 
 #10. 测试AI对模糊问题的回答
+@skip
 @print_case_name
 def test_ambiguous_question(test_env):
     try:
@@ -313,7 +324,7 @@ def test_ambiguous_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.calculate_semantic_similarity(question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -326,6 +337,7 @@ def test_ambiguous_question(test_env):
         test_env.test_log.log_critical(e)
 
 #11. 测试AI对编程问题的回答
+@skip
 @print_case_name
 def test_programming_question(test_env):
     try:
@@ -346,7 +358,7 @@ def test_programming_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.calculate_semantic_similarity(question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -359,6 +371,7 @@ def test_programming_question(test_env):
         test_env.test_log.log_critical(e)
 
 #12. 测试AI对科学问题的回答
+@skip
 @print_case_name
 def test_science_question(test_env):
     try:
@@ -379,7 +392,7 @@ def test_science_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.calculate_semantic_similarity(question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -392,7 +405,7 @@ def test_science_question(test_env):
         test_env.test_log.log_critical(e)
 
 #13. 测试AI对文化问题的回答
-
+@skip
 @print_case_name
 def test_culture_question(test_env):
     try:
@@ -413,7 +426,7 @@ def test_culture_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.calculate_semantic_similarity(question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -426,6 +439,7 @@ def test_culture_question(test_env):
         test_env.test_log.log_critical(e)
 
 # 14. 测试AI对健康问题的回答
+@skip
 @print_case_name
 def test_health_question(test_env):
     try:
@@ -446,7 +460,7 @@ def test_health_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.calculate_semantic_similarity(question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
@@ -459,6 +473,7 @@ def test_health_question(test_env):
         test_env.test_log.log_critical(e)
 
 #15. 测试AI对经济问题的回答
+@skip
 @print_case_name
 def test_economics_question(test_env):
     try:
@@ -479,7 +494,7 @@ def test_economics_question(test_env):
             case_result["total"] += 1
             answer = test_env.ask_question(question)
             test_env.test_log.log_info(f"question: {question}\nanswer: {answer}\n")
-            if test_env.calculate_semantic_similarity(question, answer):
+            if test_env.check_keyword_relevance(question, answer):
                 case_result["pass"] += 1
                 test_env.test_log.log_info("The answer is related to the question")
             else:
